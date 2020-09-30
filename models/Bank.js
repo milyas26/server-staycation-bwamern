@@ -1,15 +1,19 @@
 const mongoose = require("mongoose");
 
 const bankSchema = new mongoose.Schema({
-    bankName : {
+    nameBank : {
         type : String,
         required : true
     },
-    bankNumber : {
+    nomorRekening : {
         type : Number,
         required : true
     },
-    pemilik : {
+    name : {
+        type : String,
+        required : true
+    },
+    imageURL : {
         type : String,
         required : true
     }
