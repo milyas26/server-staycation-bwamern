@@ -1,5 +1,7 @@
 const Category = require('../models/Category');
 const Bank = require('../models/Bank');
+const Item = require('../models/Item');
+const Image = require('../models/Image');
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -109,8 +111,7 @@ module.exports = {
   },
   editBank : async (req, res) => {
     try {
-      const {id, name, nameBank, nomorRekening} = req.body;
-      console.log(name, id, nameBank, nomorRekening);
+      const { id, name, nameBank, nomorRekening } = req.body;
       const bank = await Bank.findOne({_id : id});
       if (req.file == undefined) {
         bank.name = name;
@@ -153,11 +154,45 @@ module.exports = {
     }
   },
   //END BANK
-  viewItem: (req, res) => {
-    res.render('admin/item/view_item', {
-      title: "Staycation | Item"
-    })
+
+  //ENDPOINT ITEM
+  viewItem: async (req, res) => {
+    try {
+      const category = await Category.find();
+      res.render('admin/item/view_item', {
+        title: "Staycation | Item",
+        category
+      });
+    } catch (error) {
+      req.flash('alertMessage', `${error.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/admin/item');
+    }
   },
+  addItem : async (req, res) => {
+    try {
+      const { categoryId, title, price, city, about} = req.body;
+      if(req.files.length > 0) {
+        const category = await Category.findOne({ _id: categoryId });
+        const newItem = {
+          categoryId : category._id,
+          title,
+          description : about,
+          price,
+          city
+        }
+        const item = await Item.create(newItem);
+        Category.itemId.push({_id: item._id})
+        await category.save();
+      }
+    } catch (error) {
+      req.flash('alertMessage', `${error.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/admin/item');
+    }
+  },
+
+  //END ITEM
   viewBooking: (req, res) => {
     res.render('admin/booking/view_booking', {
       title: "Staycation | Booking"
