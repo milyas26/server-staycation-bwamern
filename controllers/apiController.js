@@ -66,7 +66,8 @@ module.exports = {
                     cities: city.length
                 },
                 mostPicked,
-                category
+                category,
+                testimonial
             });
         } catch (error) {
             console.log(error)
